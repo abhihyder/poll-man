@@ -10,6 +10,10 @@ A Poll Management System built with Laravel 11, utilizing Breeze for authenticat
   - [Features](#features)
   - [Technologies Used](#technologies-used)
   - [Installation](#installation)
+  - [Testing](#testing)
+    - [PollVoteTest](#pollvotetest)
+    - [Running the Tests](#running-the-tests)
+  - [Populate Admin User and Poll](#populate-admin-user-and-poll)
   - [Usage](#usage)
   - [Endpoints](#endpoints)
   - [Real-Time Updates](#real-time-updates)
@@ -80,12 +84,10 @@ Before you begin, ensure you have met the following requirements:
    php artisan key:generate
    ```
 
-6. **Run migrations and seed the database**:
-
-   To create the necessary tables and populate the database with an admin user, run:
+6. **Run migrations**:
 
    ```bash
-   php artisan migrate --seed
+   php artisan migrate
    ```
 
 7. **Start the local development server**:
@@ -99,6 +101,42 @@ Before you begin, ensure you have met the following requirements:
    ```bash
    php artisan reverb:start
    ```
+
+9. **Run Queue**:
+
+   ```bash
+   php artisan queue:work
+   ```
+
+## Testing
+
+This project includes automated tests to ensure the functionality of the polling system. The following tests are implemented:
+
+### PollVoteTest
+
+The `PollVoteTest` includes two main test cases:
+
+1. **User Can Vote in Poll**: 
+   - This test checks that a user can successfully vote in an active poll. It verifies that the vote is recorded in the database.
+
+2. **User Cannot Vote More Than Once**: 
+   - This test ensures that a user cannot vote more than once for the same poll. If a user tries to vote again, the response will return an error indicating that they have already voted.
+
+### Running the Tests
+
+To run the tests, use the following command:
+
+```bash
+php artisan test --filter PollVoteTest
+```
+
+## Populate Admin User and Poll
+
+After successfully running the tests, you can populate the database with an admin user and a sample poll using the following commands:
+
+```bash
+php artisan db:seed
+```
 
 ## Usage
 
