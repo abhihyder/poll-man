@@ -46,17 +46,17 @@ class PollController extends Controller
         }
     }
 
-    public function show(string $uid)
+    public function show(Request $request, string $uid)
     {
         $poll = $this->pollService->show($uid);
-        $isVoted = $this->pollService->isVoted($poll['id'], request()->ip(), Auth::id());
+        $isVoted = $this->pollService->isVoted($poll['id'], $request->ip(), Auth::id());
         return view('poll.view', ['poll' => $poll, 'isVoted' => $isVoted]);
     }
 
     public function vote(VoteRequest $request)
     {
         try {
-            $vote = $this->pollService->vote($request);
+            $vote = $this->pollService->vote($request, Auth::id());
             broadcast(new VoteUpdated($vote->poll_id));
             return response()->json(['success' => true, 'message' => 'Poll Voted!'], 200);
         } catch (\Exception $e) {

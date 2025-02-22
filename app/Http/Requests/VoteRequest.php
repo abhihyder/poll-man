@@ -3,12 +3,14 @@
 namespace App\Http\Requests;
 
 use App\Models\Poll;
-use App\Models\Vote;
+use App\Traits\HasVoting;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
 class VoteRequest extends FormRequest
 {
+    use HasVoting;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -37,14 +39,7 @@ class VoteRequest extends FormRequest
                     $ip = $this->ip();
                     $userId = Auth::id();
 
-                    $exists = Vote::where('poll_id', $value)->where(function ($query) use ($ip, $userId) {
-                        $query->where('ip', $ip);
-                        if ($userId) {
-                            $query->orWhere('user_id', $userId);
-                        }
-                    })->exists();
-
-                    if ($exists) {
+                    if ($this->isVoted($value, $ip, $userId)) {
                         $fail('You have already voted for this poll.');
                     }
                 }

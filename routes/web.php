@@ -3,7 +3,6 @@
 use App\Http\Controllers\PollController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\Admin;
-use App\Models\Poll;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PollController::class, 'index'])->name('home');

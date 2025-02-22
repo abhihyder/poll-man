@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Poll;
 use App\Models\Vote;
+use App\Traits\HasVoting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 
 class PollService
 {
+
+    use HasVoting;
 
     public function index(array $attributes = [], bool $public = false): array
     {
@@ -63,10 +66,9 @@ class PollService
         return $this->pollFormat($poll);
     }
 
-    public function vote(Request $request)
+    public function vote(Request $request, ?int $userId = null)
     {
         $ip = $request->ip();
-        $userId = Auth::id();
         return Vote::create(
             [
                 'poll_id' => $request->poll_id,
@@ -80,16 +82,6 @@ class PollService
     public function delete(int $id): bool
     {
         return Poll::destroy($id);
-    }
-
-    public function isVoted(int $pollId, string $ip, ?int $userId = null): bool
-    {
-        return Vote::where('poll_id', $pollId)->where(function ($query) use ($ip, $userId) {
-            $query->where('ip', $ip);
-            if ($userId) {
-                $query->orWhere('user_id', $userId);
-            }
-        })->exists();
     }
 
     private function pollQuery(): \Illuminate\Database\Eloquent\Builder
