@@ -1,66 +1,131 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Poll Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Poll Management System built with Laravel 11, utilizing Breeze for authentication, Alpine.js for frontend interactivity, and Reverb WebSocket for real-time communication. This application allows admins to create polls, display them to users, and manage voting efficiently.
 
-## About Laravel
+## Table of Contents
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- [Poll Management System](#poll-management-system)
+  - [Table of Contents](#table-of-contents)
+  - [Prerequisites](#prerequisites)
+  - [Features](#features)
+  - [Technologies Used](#technologies-used)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Endpoints](#endpoints)
+  - [Real-Time Updates](#real-time-updates)
+    - [Client-Side Integration](#client-side-integration)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Prerequisites
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Before you begin, ensure you have met the following requirements:
 
-## Learning Laravel
+- **PHP**: Version 8.2 or higher
+- **Node.js**: Version 14 or higher
+- **SQLite Driver**: Ensure the SQLite driver is enabled in your PHP installation.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Features
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- **Admin Poll Creation**: A simple interface for creating polls with one question and multiple options.
+- **Poll Display**: A public page for displaying poll questions and options with a shareable link.
+- **Vote Submission**: An endpoint for authenticated (or guest) users to submit votes.
+- **One Vote per User/IP**: Mechanism to ensure each user can only vote once.
+- **Real-Time Updates**: Broadcasts updated vote counts using Laravel's event broadcasting and WebSockets.
+- **Client-Side Integration**: A frontend that listens for broadcast events and updates poll results in real-time.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Technologies Used
 
-## Laravel Sponsors
+- **Laravel 11**: The backend framework for building the application.
+- **Breeze**: For user authentication and simple UI scaffolding.
+- **Alpine.js**: For enhancing frontend interactivity.
+- **Reverb WebSocket**: For real-time communication and updates.
+- **SQLite**: Database for storing poll and vote data.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Installation
 
-### Premium Partners
+1. **Clone the repository**:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+   ```bash
+   git clone https://github.com/abhihyder/poll-man.git
+   cd poll-man
+   ```
 
-## Contributing
+2. **Install dependencies**:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+   ```bash
+   composer install
+   npm install
+   ```
 
-## Code of Conduct
+3. **Build the frontend**:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+   After installing the npm dependencies, run the following command to build the frontend assets:
 
-## Security Vulnerabilities
+   ```bash
+   npm run build
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+4. **Set up your environment variables**:
 
-## License
+   Copy the `.env.example` file to `.env` and configure your database and other settings:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+   ```bash
+   cp .env.example .env
+   ```
+
+   All the required values for environment variables are already defined in the `.env.example` file, making it easy for you to get started with testing.
+
+5. **Generate the application key**:
+
+   ```bash
+   php artisan key:generate
+   ```
+
+6. **Run migrations and seed the database**:
+
+   To create the necessary tables and populate the database with an admin user, run:
+
+   ```bash
+   php artisan migrate --seed
+   ```
+
+7. **Start the local development server**:
+
+   ```bash
+   php artisan serve
+   ```
+
+8. **Run WebSocket server**:
+
+   ```bash
+   php artisan reverb:start
+   ```
+
+## Usage
+
+1. **Login Instructions**:
+   Use the following credentials to log in as the admin user:
+   - **Email**: `admin@example.com`
+   - **Password**: `password`
+
+2. **Public Poll Page**:
+   Visit the public page (e.g., `/`) to see the available polls.
+
+3. **Voting**:
+   Users can submit their votes through the public poll page.
+
+## Endpoints
+
+- **GET /dashboard**: View all polls as an admin.
+- **GET /**: Display all public polls.
+- **POST /poll**: Create a new poll.
+- **GET /poll/{uid}**: Display single poll.
+- **POST /poll/vote**: Submit a vote for a poll option.
+
+## Real-Time Updates
+
+This application utilizes Laravel's event broadcasting capabilities to provide real-time updates. When a vote is cast, the updated vote count is broadcasted to all connected clients via Reverb WebSocket.
+
+### Client-Side Integration
+
+- The frontend listens for broadcast events to update the poll results in real-time using **Laravel Echo** and **Pusher.js** for WebSocket communication.
+- **Alpine.js** is utilized to manage dynamic updates on the poll results page.
