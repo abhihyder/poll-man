@@ -1,4 +1,9 @@
 <x-app-layout>
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Dashboard') }}
@@ -86,7 +91,7 @@
             </div>
 
             <!-- Modal -->
-            <div x-show="isModalOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div x-show="isModalOpen" x-cloak class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
 
                 <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-lg relative" @click.outside="isModalOpen = false">
                     <button @click="isModalOpen = false" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
