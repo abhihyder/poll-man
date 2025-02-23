@@ -18,6 +18,7 @@ A Poll Management System built with Laravel 11, utilizing Breeze for authenticat
   - [Endpoints](#endpoints)
   - [Real-Time Updates](#real-time-updates)
     - [Client-Side Integration](#client-side-integration)
+  - [Setup with Docker](#setup-with-docker)
 
 ## Prerequisites
 
@@ -167,3 +168,11 @@ This application utilizes Laravel's event broadcasting capabilities to provide r
 
 - The frontend listens for broadcast events to update the poll results in real-time using **Laravel Echo** and **Pusher.js** for WebSocket communication.
 - **Alpine.js** is utilized to manage dynamic updates on the poll results page.
+
+
+## Setup with Docker
+
+If you want to set up the project with Docker, you can use the following repository:
+```
+https://github.com/abhihyder/poll-man-docker
+```
