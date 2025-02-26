@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('polls', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('uid', 32)->uniqid();
             $table->string('question');
             $table->timestamp('ends_at');

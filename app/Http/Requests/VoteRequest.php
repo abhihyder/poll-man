@@ -39,11 +39,18 @@ class VoteRequest extends FormRequest
                     $deviceId = $this->cookie('device_id') ?? null;
                     $sessionId = session()->getId();
                     $fingerprint = $this->input('fingerprint');
-                    $userId = Auth::id();
+                    $voterId = Auth::id();
 
-                    if ($this->isVoted($value, $deviceId, $sessionId, $fingerprint, $userId)) {
+                    if ($this->isVoted($value, $deviceId, $sessionId, $fingerprint, $voterId)) {
                         $fail('You have already voted for this poll.');
                     }
+
+                    $this->merge([
+                        'user_id' => $poll->user_id,
+                        'voter_id' => $voterId,
+                        'session_id' => $sessionId,
+                        'fingerprint' => $fingerprint
+                    ]);
                 }
             ],
             'poll_option_id' => ['required', 'exists:poll_options,id']

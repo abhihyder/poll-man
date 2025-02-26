@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('poll_id')->constrained()->cascadeOnDelete();
             $table->foreignId('poll_option_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete(); // Creator of the poll
+            $table->foreignId('voter_id')->nullable()->constrained('users')->cascadeOnDelete(); // Voter casting the vote
             $table->string('device_id')->nullable();
             $table->string('session_id')->nullable();
             $table->string('fingerprint')->nullable();
@@ -23,7 +24,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Ensure users, devices, sessions, and fingerprints cannot vote twice for the same poll
-            $table->unique(['poll_id', 'user_id']);
+            $table->unique(['poll_id', 'voter_id']);
             $table->unique(['poll_id', 'device_id']);
             $table->unique(['poll_id', 'session_id']);
             $table->unique(['poll_id', 'fingerprint']);

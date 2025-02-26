@@ -16,6 +16,7 @@ class PollOptionFactory extends Factory
     public function definition()
     {
         return [
+            'user_id' => 1,
             'poll_id' => Poll::factory(),
             'title' => $this->faker->sentence,
         ];

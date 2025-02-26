@@ -15,8 +15,8 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::post('/poll', [PollController::class, 'store'])->name('poll.store')->middleware(Admin::class);
-    Route::delete('/poll/{id}', [PollController::class, 'destroy'])->name('poll.delete')->middleware(Admin::class);
+    Route::post('/poll', [PollController::class, 'store'])->name('poll.store');
+    Route::delete('/poll/{id}', [PollController::class, 'destroy'])->name('poll.delete');
 });
 
 Route::get('/poll/{uid}', [PollController::class, 'show'])->name('poll.show');

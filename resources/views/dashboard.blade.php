@@ -5,16 +5,6 @@
         </h2>
     </x-slot>
 
-    @if(!Auth::user()->is_admin)
-    <div class="flex justify-center bg-gray-100 mt-2 p-6">
-        <div class="bg-white rounded-2xl shadow-xl p-8">
-            <p class="text-gray-600">You're logged in as a user.</p>
-        </div>
-    </div>
-    @endif
-
-    @if(Auth::user()->is_admin)
-
     <div class="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 p-6" x-data="pollApp()">
         <div class="max-w-4xl mx-auto">
             <div class="bg-white rounded-2xl shadow-xl p-8 mx-2">
@@ -226,5 +216,4 @@
             };
         }
     </script>
-    @endif
 </x-app-layout>

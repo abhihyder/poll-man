@@ -15,6 +15,7 @@ class PollFactory extends Factory
     public function definition()
     {
         return [
+            'user_id' => 1,
             'uid' => Str::random(),
             'question' => $this->faker->sentence,
             // 'ends_at' => $this->faker->dateTimeBetween('+1 week', '+2 weeks')

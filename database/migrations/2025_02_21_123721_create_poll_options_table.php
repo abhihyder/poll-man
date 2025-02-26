@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('poll_options', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('poll_id')->index();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('poll_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->timestamps();
         });

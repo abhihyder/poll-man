@@ -12,12 +12,12 @@ trait HasVoting
      *
      * @param int $pollId
      * @param string $ip
-     * @param int|null $userId
+     * @param int|null $voterId
      * @return bool
      */
-    public function isVoted(int $pollId, ?string $deviceId, ?string $sessionId, ?string $fingerprint, ?int $userId = null): bool
+    public function isVoted(int $pollId, ?string $deviceId, ?string $sessionId, ?string $fingerprint, ?int $voterId = null): bool
     {
-        return Vote::where('poll_id', $pollId)->where(function ($query) use ($deviceId, $sessionId, $fingerprint, $userId) {
+        return Vote::where('poll_id', $pollId)->where(function ($query) use ($deviceId, $sessionId, $fingerprint, $voterId) {
             if ($deviceId) {
                 $query->orWhere('device_id', $deviceId);
             }
@@ -27,8 +27,8 @@ trait HasVoting
             if ($fingerprint) {
                 $query->orWhere('fingerprint', $fingerprint);
             }
-            if ($userId) {
-                $query->orWhere('user_id', $userId);
+            if ($voterId) {
+                $query->orWhere('voter_id', $voterId);
             }
         })->exists();
     }

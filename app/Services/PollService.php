@@ -18,7 +18,19 @@ class PollService
 
     use HasVoting;
 
-    public function index(array $attributes = [], bool $public = false): array
+    /**
+     * Retrieve a paginated list of polls based on the provided attributes.
+     *
+     * This function supports filtering by user ID and public availability.
+     * It also allows pagination through 'page' and 'limit' attributes.
+     *
+     * @param array $attributes An array of attributes to filter and paginate the polls.
+     * @param int|null $userId Optional user ID to filter the polls by a specific user.
+     * @param bool $public A flag indicating whether to retrieve only public polls.
+     * @return array An array of formatted poll data.
+     */
+
+    public function index(array $attributes = [], ?int $userId = null, bool $public = false): array
     {
         $page = Arr::get($attributes, 'page', 1);
         $limit = Arr::get($attributes, 'limit', 10);
@@ -26,6 +38,7 @@ class PollService
 
         $polls = $this->pollQuery()
             ->when($public, fn($query) => $query->where('ends_at', '>', now()))
+            ->when($userId, fn($query) => $query->where('user_id', $userId))
             ->offset($offSet)
             ->limit($limit)
             ->orderBy('created_at', 'desc')
@@ -34,15 +47,16 @@ class PollService
         return $polls->map(fn($poll) => $this->pollFormat($poll))->toArray();;
     }
 
-    public function store(array $attributes): array
+    public function store(array $attributes, int $userId): array
     {
-        return DB::transaction(function () use ($attributes) {
+        return DB::transaction(function () use ($attributes, $userId) {
             $poll = Poll::create([
+                'user_id' => $userId,
                 'question' => $attributes['question'],
                 'ends_at' => $attributes['ends_at'],
             ]);
 
-            $options = array_map(fn($option) => ['title' => $option, 'poll_id' => $poll->id], $attributes['options']);
+            $options = array_map(fn($option) => ['title' => $option, 'poll_id' => $poll->id, 'user_id' => $userId], $attributes['options']);
 
             $poll->pollOptions()->createMany($options);
 
@@ -66,21 +80,19 @@ class PollService
         return $this->pollFormat($poll);
     }
 
-    public function vote(Request $request, ?int $userId = null)
+    public function vote(Request $request)
     {
         $deviceId = $request->cookie('device_id') ?? Str::uuid()->toString();
         Cookie::queue('device_id', $deviceId, 60 * 24 * 30); // Store for 30 days
 
-        $sessionId = session()->getId();
-        $fingerprint = $request->input('fingerprint');
-
         return Vote::create([
             'poll_id' => $request->poll_id,
             'poll_option_id' => $request->poll_option_id,
-            'user_id' => $userId,
+            'user_id' => $request->user_id,
+            'voter_id' => $request->voter_id,
             'device_id' => $deviceId,
-            'session_id' => $sessionId,
-            'fingerprint' => $fingerprint,
+            'session_id' => $request->session_id,
+            'fingerprint' => $request->fingerprint,
         ]);
     }
 

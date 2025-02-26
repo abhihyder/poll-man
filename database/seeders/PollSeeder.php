@@ -16,7 +16,7 @@ class PollSeeder extends Seeder
     {
         Poll::factory()
             ->has(PollOption::factory()->count(3))
-            ->count(6)
-            ->create(['ends_at' => now()->addDays(1)]);
+            ->count(10)
+            ->create(['ends_at' => now()->addDays(5)]);
     }
 }

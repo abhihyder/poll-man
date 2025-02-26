@@ -19,6 +19,11 @@ class Poll extends Model
         });
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function pollOptions()
     {
         return $this->hasMany(PollOption::class);
