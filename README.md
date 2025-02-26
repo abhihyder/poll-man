@@ -172,7 +172,4 @@ This application utilizes Laravel's event broadcasting capabilities to provide r
 
 ## Setup with Docker
 
-If you want to set up the project with Docker, you can use the following repository:
-```
-https://github.com/abhihyder/poll-man-docker
-```
+If you want to set up the project with Docker, you can use the following [Docker Repository](https://github.com/abhihyder/poll-man-docker).
