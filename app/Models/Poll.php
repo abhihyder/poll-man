@@ -19,13 +19,7 @@ class Poll extends Model
         });
     }
 
-    public function options()
-    {
-        return $this->hasMany(PollOption::class);
-    }
-
-    // Written for test case purposes
-    public function pollOption()
+    public function pollOptions()
     {
         return $this->hasMany(PollOption::class);
     }

@@ -49,7 +49,15 @@ class PollController extends Controller
     public function show(Request $request, string $uid)
     {
         $poll = $this->pollService->show($uid);
-        $isVoted = $this->pollService->isVoted($poll['id'], $request->ip(), Auth::id());
+
+        // Capture identifiers
+        $userId = Auth::id();
+        $deviceId = $request->cookie('device_id');
+        $sessionId = $request->session()->getId();
+        $fingerprint = $request->cookie('fingerprint'); // Set from JS
+
+        $isVoted = $this->pollService->isVoted($poll['id'], $deviceId, $sessionId, $fingerprint, $userId);
+
         return view('poll.view', ['poll' => $poll, 'isVoted' => $isVoted]);
     }
 

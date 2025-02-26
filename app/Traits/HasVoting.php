@@ -15,10 +15,18 @@ trait HasVoting
      * @param int|null $userId
      * @return bool
      */
-    public function isVoted(int $pollId, string $ip, ?int $userId = null): bool
+    public function isVoted(int $pollId, ?string $deviceId, ?string $sessionId, ?string $fingerprint, ?int $userId = null): bool
     {
-        return Vote::where('poll_id', $pollId)->where(function ($query) use ($ip, $userId) {
-            $query->where('ip', $ip);
+        return Vote::where('poll_id', $pollId)->where(function ($query) use ($deviceId, $sessionId, $fingerprint, $userId) {
+            if ($deviceId) {
+                $query->orWhere('device_id', $deviceId);
+            }
+            if ($sessionId) {
+                $query->orWhere('session_id', $sessionId);
+            }
+            if ($fingerprint) {
+                $query->orWhere('fingerprint', $fingerprint);
+            }
             if ($userId) {
                 $query->orWhere('user_id', $userId);
             }

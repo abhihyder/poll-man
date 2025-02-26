@@ -7,8 +7,10 @@ use App\Models\Vote;
 use App\Traits\HasVoting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 
 class PollService
@@ -29,9 +31,7 @@ class PollService
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return $polls->map(function ($poll) {
-            return $this->pollFormat($poll);
-        })->toArray();
+        return $polls->map(fn($poll) => $this->pollFormat($poll))->toArray();;
     }
 
     public function store(array $attributes): array
@@ -44,7 +44,7 @@ class PollService
 
             $options = array_map(fn($option) => ['title' => $option, 'poll_id' => $poll->id], $attributes['options']);
 
-            $poll->options()->createMany($options);
+            $poll->pollOptions()->createMany($options);
 
             return $this->pollFormat($poll);
         });
@@ -68,15 +68,20 @@ class PollService
 
     public function vote(Request $request, ?int $userId = null)
     {
-        $ip = $request->ip();
-        return Vote::create(
-            [
-                'poll_id' => $request->poll_id,
-                'option_id' => $request->option_id,
-                'ip' => $ip,
-                'user_id' => $userId
-            ]
-        );
+        $deviceId = $request->cookie('device_id') ?? Str::uuid()->toString();
+        Cookie::queue('device_id', $deviceId, 60 * 24 * 30); // Store for 30 days
+
+        $sessionId = session()->getId();
+        $fingerprint = $request->input('fingerprint');
+
+        return Vote::create([
+            'poll_id' => $request->poll_id,
+            'poll_option_id' => $request->poll_option_id,
+            'user_id' => $userId,
+            'device_id' => $deviceId,
+            'session_id' => $sessionId,
+            'fingerprint' => $fingerprint,
+        ]);
     }
 
     public function delete(int $id): bool
@@ -86,7 +91,7 @@ class PollService
 
     private function pollQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        return Poll::with(['options' => function ($query) {
+        return Poll::with(['pollOptions' => function ($query) {
             $query->select('id', 'poll_id', 'title')
                 ->withCount('votes');
         }])
@@ -99,7 +104,7 @@ class PollService
             'id' => $poll->id,
             'uid' => $poll->uid,
             'question' => $poll->question,
-            'options' => $poll->options->map(function ($option) {
+            'options' => $poll->pollOptions->map(function ($option) {
                 return [
                     'id' => $option->id,
                     'title' => $option->title,

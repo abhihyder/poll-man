@@ -36,15 +36,17 @@ class VoteRequest extends FormRequest
                         $fail('The poll has expired.');
                     }
 
-                    $ip = $this->ip();
+                    $deviceId = $this->cookie('device_id') ?? null;
+                    $sessionId = session()->getId();
+                    $fingerprint = $this->input('fingerprint');
                     $userId = Auth::id();
 
-                    if ($this->isVoted($value, $ip, $userId)) {
+                    if ($this->isVoted($value, $deviceId, $sessionId, $fingerprint, $userId)) {
                         $fail('You have already voted for this poll.');
                     }
                 }
             ],
-            'option_id' => ['required', 'exists:poll_options,id']
+            'poll_option_id' => ['required', 'exists:poll_options,id']
         ];
     }
 }

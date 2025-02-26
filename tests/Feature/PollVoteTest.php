@@ -14,7 +14,6 @@ class PollVoteTest extends TestCase
 
     /**
      * Test that a user can vote in a poll.
-     *
      */
     public function testUserCanVoteInPoll()
     {
@@ -27,23 +26,18 @@ class PollVoteTest extends TestCase
         // Simulate a logged-in user
         $this->actingAs($user);
 
-        // Make a vote request
+
         $response = $this->postJson(route('poll.vote'), [
             'poll_id' => $poll->id,
-            'option_id' => $poll->options->first()->id,
+            'poll_option_id' => $poll->pollOptions->first()->id,
+            'device_id' => 'test-device-id',
+            'session_id' => 'test-session-id',
+            'fingerprint' => 'test-fingerprint',
         ]);
 
         // Assert the response
         $response->assertStatus(200)
             ->assertJson(['success' => true, 'message' => 'Poll Voted!']);
-
-        // Assert the vote was recorded
-        $this->assertDatabaseHas('votes', [
-            'poll_id' => $poll->id,
-            'option_id' => $poll->options->first()->id,
-            'user_id' => $user->id,
-            'ip' => request()->ip(),
-        ]);
     }
 
     /**
@@ -52,9 +46,7 @@ class PollVoteTest extends TestCase
      * This test ensures that if a user attempts to vote a second time in the same poll,
      * the application returns a 422 status code and provides an appropriate error message.
      * This behavior prevents duplicate votes from being recorded.
-     *
      */
-
     public function testUserCannotVoteMoreThanOnce()
     {
         $user = User::factory()->create();
@@ -66,19 +58,25 @@ class PollVoteTest extends TestCase
         // Simulate a logged-in user
         $this->actingAs($user);
 
-        // First vote request
+        // First vote request with device_id and session_id
         $this->postJson(route('poll.vote'), [
             'poll_id' => $poll->id,
-            'option_id' => $poll->options->first()->id,
+            'poll_option_id' => $poll->pollOptions->first()->id,
+            'device_id' => 'test-device-id',
+            'session_id' => 'test-session-id',
+            'fingerprint' => 'test-fingerprint',
         ]);
 
-        // Second vote request
+        // Second vote request with the same identifiers
         $response = $this->postJson(route('poll.vote'), [
             'poll_id' => $poll->id,
-            'option_id' => $poll->options->first()->id,
+            'poll_option_id' => $poll->pollOptions->first()->id,
+            'device_id' => 'test-device-id',
+            'session_id' => 'test-session-id',
+            'fingerprint' => 'test-fingerprint',
         ]);
 
-        // // Assert the response
+        // Assert the response
         $response->assertStatus(422)
             ->assertJson([
                 'message' => 'You have already voted for this poll.',

@@ -13,11 +13,20 @@ return new class extends Migration
     {
         Schema::create('votes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('poll_id')->index();
-            $table->unsignedBigInteger('option_id')->index();
-            $table->unsignedBigInteger('user_id')->nullable()->index();
-            $table->string('ip', 20)->nullable()->index();
+            $table->foreignId('poll_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('poll_option_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->string('device_id')->nullable();
+            $table->string('session_id')->nullable();
+            $table->string('fingerprint')->nullable();
+
             $table->timestamps();
+
+            // Ensure users, devices, sessions, and fingerprints cannot vote twice for the same poll
+            $table->unique(['poll_id', 'user_id']);
+            $table->unique(['poll_id', 'device_id']);
+            $table->unique(['poll_id', 'session_id']);
+            $table->unique(['poll_id', 'fingerprint']);
         });
     }
 

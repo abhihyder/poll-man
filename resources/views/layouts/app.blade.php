@@ -17,6 +17,8 @@
         }
     </style>
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -42,10 +44,32 @@
             <span x-text="message"></span>
         </div>
 
-        <!-- Page Content -->
-        <main>
-            {{ $slot }}
-        </main>
+
+        <div x-data="fingerprintHandler()" x-init="initFingerprint()">
+            <!-- Page Content -->
+            <main>
+                {{ $slot }}
+            </main>
+        </div>
+
+        <script>
+            function fingerprintHandler() {
+                return {
+                    fingerprint: null,
+
+                    initFingerprint() {
+                        // Load FingerprintJS
+                        FingerprintJS.load().then(fp => {
+                            fp.get().then(result => {
+                                this.fingerprint = result.visitorId; // Unique fingerprint
+                                document.cookie = `fingerprint=${this.fingerprint}; path=/; max-age=31536000;`;
+                            });
+                        });
+                    }
+                }
+            }
+        </script>
+
     </div>
 </body>
 

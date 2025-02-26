@@ -18,6 +18,6 @@ class PollOption extends Model
 
     public function votes()
     {
-        return $this->hasMany(Vote::class, 'option_id');
+        return $this->hasMany(Vote::class);
     }
 }

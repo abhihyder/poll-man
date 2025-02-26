@@ -77,7 +77,7 @@
                         },
                         body: JSON.stringify({
                             poll_id: this.poll.id,
-                            option_id: optionId
+                            poll_option_id: optionId
                         })
                     }).then((response) => {
                         if (response.ok) {
